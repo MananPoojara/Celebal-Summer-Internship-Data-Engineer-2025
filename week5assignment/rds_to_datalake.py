@@ -5,11 +5,22 @@ from pyspark.sql import SparkSession
 import os
 import shutil
 from azure.storage.blob import BlobServiceClient
+from dotenv import load_dotenv
 
-# Azure details
-AZURE_STORAGE_ACCOUNT_NAME = "datalakecelebal"
-AZURE_ACCOUNT_KEY = "5vr4+vEK3ZDC0WYP1uh2VenFHunotJXNV+xV5EB1FPBYkXSURuTNjNlZGC2w/PrErVctXBU11uyA+AStBoLd+Q=="
-AZURE_CONTAINER_NAME = "output"
+
+# Credentials 
+load_dotenv()
+
+AZURE_STORAGE_ACCOUNT_NAME = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
+AZURE_ACCOUNT_KEY = os.getenv("AZURE_ACCOUNT_KEY")
+AZURE_CONTAINER_NAME = os.getenv("AZURE_CONTAINER_NAME")
+
+RDS_HOST = os.getenv("RDS_HOST")
+RDS_PORT = os.getenv("RDS_PORT")
+RDS_DB = os.getenv("RDS_DB")
+RDS_USER = os.getenv("RDS_USER")
+RDS_PASSWORD = os.getenv("RDS_PASSWORD")
+
 
 def create_spark_session():
     return SparkSession.builder \
@@ -19,18 +30,18 @@ def create_spark_session():
 
 def extract(**kwargs):
     spark = create_spark_session()
-    selected_tables = ["orders"]  
+    selected_tables = ["orders"]  # Selected tables
 
     tmp_base_dir = os.path.join(os.getcwd(), "data", "tmp_extract")
     os.makedirs(tmp_base_dir, exist_ok=True)
 
     for table in selected_tables:
         df = spark.read.jdbc(
-            url="jdbc:postgresql://db-instance-1.cv6sueaggltg.ap-south-1.rds.amazonaws.com:5432/orders",
+            url=f"jdbc:postgresql://{RDS_HOST}:{RDS_PORT}/{RDS_DB}",
             table=table,
             properties={
-                "user": "postgres",
-                "password": "Dexter2005",
+                "user": RDS_USER,
+                "password": RDS_PASSWORD,
                 "driver": "org.postgresql.Driver"
             }
         )
