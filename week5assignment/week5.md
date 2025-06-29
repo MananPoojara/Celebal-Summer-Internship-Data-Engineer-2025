@@ -82,7 +82,7 @@ airflow standalone
 Access the Airflow UI at [http://localhost:8080](http://localhost:8080).
 ⚠️ Check logs or your Airflow directory for the auto-generated username and password.
 
-7️⃣ **Deploy your DAG**
+7️⃣ **Deploy My DAG**
 Copy [`rds_to_datalake.py`](./rds_to_datalake.py) into your `airflow/dags/` folder.
 Your DAG will appear in the Airflow UI.
 
